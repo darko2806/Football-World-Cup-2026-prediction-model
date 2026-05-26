@@ -1,0 +1,24 @@
+WORLD CUP 2026 MODEL
+The world cup has 12 groups of 4 teams, 48 teams in total. All top two advance to the next leg of the tournament and the 8 best third-placed teams also.
+
+MAIN OBJECTIVE: 
+Create a model that predicts the expected goals for each team in a certain match (model has two outputs for two different teams)
+                                ||
+                                ||
+                                ||
+Use those predicted expected goals values as lambda values for number of goals for the first team and the second team    
+                                ||
+                                ||
+                                ||
+Using Poisson distribution and the lambda values, we get the probabilities by implemeting this logic:
+
+Team 1 win probability = sum of P(G1 = i, G2 = j) over all i > j
+
+Draw probability = sum of P(G1 = i, G2 = j) over all i = j
+
+Team 2 win probability = sum of P(G1 = i, G2 = j) over all i < j
+
+We should definitely run a large number of simulations to get more precise results (n_simulations => large number around 100000)
+
+
+
