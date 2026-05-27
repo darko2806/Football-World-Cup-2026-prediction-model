@@ -1,0 +1,9 @@
+# velike binarne datoteke koje ne idu u git
+*.pkl
+*.h5
+*.parquet
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+.env
