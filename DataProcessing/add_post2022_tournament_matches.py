@@ -14,9 +14,6 @@ Follows the exact same processing steps as DataProcessingForModel.ipynb:
 
 import pandas as pd
 
-# =========================
-# 0. Config
-# =========================
 
 WC2026_TEAMS = [
     'Algeria', 'Argentina', 'Australia', 'Austria', 'Belgium', 'Bosnia and Herzegovina',
@@ -30,17 +27,11 @@ WC2026_TEAMS = [
 
 TOURNAMENTS = ['UEFA Euro', 'African Cup of Nations', 'AFC Asian Cup', 'Copa América']
 
-# =========================
-# 1. Load existing final dataset
-# =========================
 
 final_existing = pd.read_csv('../data/Processed_Project_Data/fifa_and_elo_rankings_clean_filled.csv')
 final_existing = final_existing.drop(columns=["Unnamed: 0"], errors="ignore")
 max_match_id = final_existing["match_id"].max()
 
-# =========================
-# 2. Select new matches from results.csv
-# =========================
 
 results = pd.read_csv('../data/raw_data/results.csv')
 results["date"] = pd.to_datetime(results["date"])
@@ -63,9 +54,6 @@ new_matches["match_id"] = range(max_match_id + 1, max_match_id + 1 + len(new_mat
 print(f"New matches selected: {len(new_matches)}")
 print(new_matches["tournament"].value_counts())
 
-# =========================
-# 3. FIFA ranking features
-# =========================
 
 rank_data = pd.read_csv('../data/ProcessedDataForTestModel/FIFA_rankings_2021_2026.csv')
 rank_data = rank_data.drop(columns=["Unnamed: 0"], errors="ignore")
@@ -172,9 +160,6 @@ new_matches = new_matches.drop(
     errors="ignore"
 )
 
-# =========================
-# 4. ELO features (current snapshot)
-# =========================
 
 elo_data = pd.read_csv('../data/raw_data/elo_ratings_wc2026.csv')
 elo_data["snapshot_date"] = pd.to_datetime(elo_data["snapshot_date"])
@@ -290,9 +275,6 @@ new_matches = new_matches.drop(
     errors="ignore"
 )
 
-# =========================
-# 5. ELO historical fallback fill
-# =========================
 
 import re
 
@@ -414,9 +396,6 @@ temp_cols = [
 ]
 new_matches = new_matches.drop(columns=temp_cols, errors="ignore")
 
-# =========================
-# 6. Drop bad rows (same cleaning as original pipeline)
-# =========================
 
 new_matches["date"] = pd.to_datetime(new_matches["date"])
 new_matches["home_elo_date_used"] = pd.to_datetime(new_matches["home_elo_date_used"])
@@ -442,9 +421,6 @@ new_matches_clean["elo_advantage"] = new_matches_clean["home_elo"] - new_matches
 print(f"\nRows before cleaning: {before}")
 print(f"Rows after cleaning: {len(new_matches_clean)}")
 
-# =========================
-# 7. Select final columns and append
-# =========================
 
 FINAL_COLUMNS = [
     'date', 'home_team', 'away_team', 'home_score', 'away_score',

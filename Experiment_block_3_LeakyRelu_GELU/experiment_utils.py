@@ -16,6 +16,44 @@ from sklearn.metrics import (
     confusion_matrix
 )
 
+class MLPClassifierLeakyReLU(nn.Module):
+    def __init__(self, input_dim):
+        super().__init__()
+
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, 32),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.Dropout(0.2),
+
+            nn.Linear(32, 16),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.Dropout(0.2),
+
+            nn.Linear(16, 3)
+        )
+
+    def forward(self, x):
+        return self.network(x)
+
+class MLPClassifierGELU(nn.Module):
+    def __init__(self, input_dim):
+        super().__init__()
+
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, 32),
+            nn.GELU(),
+            nn.Dropout(0.2),
+
+            nn.Linear(32, 16),
+            nn.GELU(),
+            nn.Dropout(0.2),
+
+            nn.Linear(16, 3)
+        )
+
+    def forward(self, x):
+        return self.network(x)
+
 class MLPClassifier(nn.Module):
     def __init__(self, input_dim):
         super().__init__()
@@ -446,6 +484,49 @@ def save_result_v1(
     experiment_name,
     summary,
     results_file="../results/experiment_summary_v1.csv"
+):
+    results_file = Path(results_file)
+    results_file.parent.mkdir(exist_ok=True)
+
+    row = pd.DataFrame([{
+        "experiment": experiment_name,
+        "accuracy": summary["accuracy"],
+        "precision": summary["precision"],
+        "recall": summary["recall"],
+        "specificity": summary["specificity"],
+        "f1": summary["f1"],
+        "f1_std": summary["f1_std"],
+        "f1_min": summary["f1_min"],
+        "f1_max": summary["f1_max"]
+    }])
+
+    if results_file.exists():
+        old_results = pd.read_csv(results_file)
+
+        old_results = old_results[
+            old_results["experiment"] != experiment_name
+        ]
+
+        new_results = pd.concat(
+            [old_results, row],
+            ignore_index=True
+        )
+    else:
+        new_results = row
+
+    new_results.to_csv(
+        results_file,
+        index=False
+    )
+
+    print()
+    print(f"Saved result for {experiment_name}")
+    print(f"File: {results_file}")
+
+def save_result_activation_change(
+    experiment_name,
+    summary,
+    results_file="../results/experiment_summary_activation_change.csv"
 ):
     results_file = Path(results_file)
     results_file.parent.mkdir(exist_ok=True)
